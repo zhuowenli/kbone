@@ -1,6 +1,7 @@
 const Element = require('../element')
 const Pool = require('../../util/pool')
 const cache = require('../../util/cache')
+const tool = require('../../util/tool')
 
 const pool = new Pool()
 
@@ -43,19 +44,19 @@ class HTMLInputElement extends Element {
      */
     $$dealWithAttrsForGenerateHtml(html, node) {
         const type = node.type
-        if (type) html += ` type="${type}"`
+        if (type) html += ` type="${tool.escapeForHtmlGeneration(type)}"`
 
         const value = node.value
-        if (value) html += ` value="${value}"`
+        if (value) html += ` value="${tool.escapeForHtmlGeneration(value)}"`
 
         const disabled = node.disabled
         if (disabled) html += ' disabled'
 
         const maxlength = node.maxlength
-        if (maxlength) html += ` maxlength="${maxlength}"`
+        if (maxlength) html += ` maxlength="${tool.escapeForHtmlGeneration(maxlength)}"`
 
         const placeholder = node.placeholder
-        if (placeholder) html += ` placeholder="${placeholder.replace(/"/g, '\\"')}"`
+        if (placeholder) html += ` placeholder="${tool.escapeForHtmlGeneration(placeholder)}"`
 
         return html
     }
@@ -64,9 +65,10 @@ class HTMLInputElement extends Element {
      * 调用 outerHTML 的 setter 时用于处理额外的属性
      */
     $$dealWithAttrsForOuterHTML(node) {
+        this.name = node.name || ''
         this.type = node.type || ''
         this.value = node.value || ''
-        this.disabled = node.disabled || ''
+        this.disabled = !!node.disabled
         this.maxlength = node.maxlength
         this.placeholder = node.placeholder || ''
 
@@ -99,7 +101,7 @@ class HTMLInputElement extends Element {
 
     set name(value) {
         value = '' + value
-        return this.$_attrs.set('name', value)
+        this.$_attrs.set('name', value)
     }
 
     get type() {

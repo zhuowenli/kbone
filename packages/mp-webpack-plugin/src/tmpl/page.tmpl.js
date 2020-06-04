@@ -121,6 +121,12 @@ Page({
         // 处理 intersectionObserver 获取
         this.window.$$createIntersectionObserver = options => wx.createIntersectionObserver(this, options)
 
+        // 处理 openerEventChannel 获取
+        this.window.$$getOpenerEventChannel = () => this.getOpenerEventChannel()
+
+        // 初始化页面显示状态
+        this.document.$$visibilityState = 'prerender'
+
         init(this.window, this.document)
         this.setData({
             pageId: this.pageId
@@ -135,7 +141,9 @@ Page({
             window: this.window,
             document: this.document,
         }
+        this.document.$$visibilityState = 'visible'
         this.window.$$trigger('wxshow')
+        this.document.$$trigger('visibilitychange')
     },
     onReady() {
         if (this.pageConfig.loadingText) wx.hideLoading()
@@ -143,13 +151,17 @@ Page({
     },
     onHide() {
         global.$$runtime = null
+        this.document.$$visibilityState = 'hidden'
         this.window.$$trigger('wxhide')
+        this.document.$$trigger('visibilitychange')
     },
     onUnload() {
+        this.document.$$visibilityState = 'unloaded'
         this.window.$$trigger('beforeunload')
         this.window.$$trigger('wxunload')
         if (this.app && this.app.$destroy) this.app.$destroy()
         this.document.body.$$recycle() // 回收 dom 节点
+        this.window.$$destroy()
 
         mp.destroyPage(this.pageId)
         global.$$runtime = null

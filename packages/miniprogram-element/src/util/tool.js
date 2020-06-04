@@ -12,14 +12,14 @@ const {
     wxSubComponentMap,
 } = component
 
-const ELEMENT_DIFF_KEYS = ['nodeId', 'pageId', 'tagName', 'compName', 'id', 'className', 'style', 'src', 'mode', 'lazyLoad', 'showMenuByLongpress', 'useTemplate', 'isImage', 'isLeaf', 'isSimple', 'content', 'extra']
+const ELEMENT_DIFF_KEYS = ['nodeId', 'pageId', 'tagName', 'compName', 'id', 'className', 'style', 'src', 'mode', 'webp', 'lazyLoad', 'showMenuByLongpress', 'useTemplate', 'isImage', 'isLeaf', 'isSimple', 'content', 'extra']
 const TEXT_NODE_DIFF_KEYS = ['nodeId', 'pageId', 'content']
 const NEET_SPLIT_CLASS_STYLE_FROM_CUSTOM_ELEMENT = ['WX-COMPONENT', 'WX-CUSTOM-COMPONENT'] // 需要分离 class 和 style 的节点
 const NEET_BEHAVIOR_NORMAL_CUSTOM_ELEMENT_PARENT = ['swiper', 'movable-area']
 const NEET_BEHAVIOR_NORMAL_CUSTOM_ELEMENT = ['swiper-item', 'movable-view', 'picker-view-column']
 const NEET_RENDER_TO_CUSTOM_ELEMENT = ['IFRAME', ...NEET_SPLIT_CLASS_STYLE_FROM_CUSTOM_ELEMENT] // 必须渲染成自定义组件的节点
 const NOT_SUPPORT = ['IFRAME']
-const USE_TEMPLATE = ['cover-image', 'movable-area', 'movable-view', 'swiper', 'swiper-item', 'icon', 'progress', 'rich-text', 'button', 'editor', 'form', 'INPUT', 'picker', 'slider', 'switch', 'TEXTAREA', 'navigator', 'camera', 'image', 'live-player', 'live-pusher', 'VIDEO', 'map', 'CANVAS', 'ad', 'official-account', 'open-data', 'web-view', 'capture', 'catch', 'animation'] // 使用 template 渲染
+const USE_TEMPLATE = ['cover-image', 'movable-area', 'movable-view', 'swiper', 'swiper-item', 'icon', 'progress', 'rich-text', 'button', 'editor', 'form', 'INPUT', 'picker', 'SELECT', 'slider', 'switch', 'TEXTAREA', 'navigator', 'camera', 'image', 'live-player', 'live-pusher', 'VIDEO', 'map', 'CANVAS', 'ad', 'official-account', 'open-data', 'web-view', 'capture', 'catch', 'animation'] // 使用 template 渲染
 const IN_COVER = ['cover-view'] // 子节点必须使用 cover-view/cover-image
 
 /**
@@ -27,10 +27,16 @@ const IN_COVER = ['cover-view'] // 子节点必须使用 cover-view/cover-image
  */
 function filterNodes(domNode, level, component) {
     const window = cache.getWindow(domNode.$$pageId)
-    const childNodes = domNode.childNodes || []
+    let childNodes = domNode.childNodes || []
 
-    if (!childNodes.map) return []
+    if (typeof childNodes.map !== 'function') return []
     if (NOT_SUPPORT.indexOf(domNode.tagName) >= 0) return [] // 不支持标签，不渲染子节点
+
+    if (domNode.tagName === 'SELECT') {
+        // select 标签只渲染和 select 值相同的 option
+        const index = childNodes.findIndex(childNode => childNode.value === domNode.value)
+        childNodes = index !== -1 ? [childNodes[index]] : []
+    }
 
     return childNodes.map(child => {
         const domInfo = child.$$domInfo
@@ -74,6 +80,7 @@ function filterNodes(domNode, level, component) {
         if (domInfo.isImage) {
             domInfo.src = child.src ? tool.completeURL(child.src, window.location.origin, true) : ''
             domInfo.mode = child.getAttribute('mode') || ''
+            domInfo.webp = !!child.getAttribute('webp')
             domInfo.lazyLoad = !!child.getAttribute('lazy-load')
             domInfo.showMenuByLongpress = !!child.getAttribute('show-menu-by-longpress')
         }
@@ -163,6 +170,12 @@ function checkDiffChildNodes(newChildNodes, oldChildNodes) {
                 // 值为对象，则判断对象顶层值是否有变化
                 if (typeof oldValue !== 'object') return true
 
+                // 需要强制更新
+                if (key === 'extra' && newValue.forceUpdate) {
+                    newValue.forceUpdate = false
+                    return true
+                }
+
                 const objectKeys = Object.keys(newValue)
                 for (const objectKey of objectKeys) {
                     if (!isEqual(newValue[objectKey], oldValue[objectKey])) return true
@@ -200,6 +213,7 @@ function checkComponentAttr(name, domNode, destData, oldData, extraClass = '') {
                 const oldValues = domNode._oldValues
                 if (!oldData || !isEqual(newValue, oldData[name]) || (oldValues && !isEqual(newValue, oldValues[name]))) {
                     destData[name] = newValue
+                    destData.forceUpdate = true // 避免被 diff 掉，需要强制更新
                 }
             } else if (!oldData || !isEqual(newValue, oldData[name])) {
                 // 对比 data
@@ -228,8 +242,8 @@ function dealWithLeafAndSimple(childNodes, onChildNodesUpdate) {
             const childNode = Object.assign({}, originChildNode)
 
             if (childNode.isImage || childNode.isLeaf || childNode.isSimple || childNode.useTemplate) {
-                childNode.domNode.$$clearEvent('$$childNodesUpdate')
-                childNode.domNode.addEventListener('$$childNodesUpdate', onChildNodesUpdate)
+                childNode.domNode.$$clearEvent('$$childNodesUpdate', {$$namespace: 'child'})
+                childNode.domNode.addEventListener('$$childNodesUpdate', onChildNodesUpdate, {$$namespace: 'child'})
             }
 
             delete childNode.domNode
@@ -282,6 +296,35 @@ function findParentNode(domNode, tagName) {
     return null
 }
 
+/**
+ * 判断基础库版本
+ */
+function compareVersion(v1, v2) {
+    v1 = v1.split('.')
+    v2 = v2.split('.')
+    const len = Math.max(v1.length, v2.length)
+
+    while (v1.length < len) {
+        v1.push('0')
+    }
+    while (v2.length < len) {
+        v2.push('0')
+    }
+
+    for (let i = 0; i < len; i++) {
+        const num1 = parseInt(v1[i], 10)
+        const num2 = parseInt(v2[i], 10)
+
+        if (num1 > num2) {
+            return 1
+        } else if (num1 < num2) {
+            return -1
+        }
+    }
+
+    return 0
+}
+
 module.exports = {
     NOT_SUPPORT,
     USE_TEMPLATE,
@@ -292,4 +335,5 @@ module.exports = {
     dealWithLeafAndSimple,
     checkEventAccessDomNode,
     findParentNode,
+    compareVersion,
 }

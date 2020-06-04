@@ -62,6 +62,10 @@ const wxComponentMap = {
         wxCompName: 'picker',
         config: require('../component/picker'),
     },
+    SELECT: {
+        wxCompName: 'picker',
+        config: require('../component/picker'),
+    },
     'picker-view': {
         wxCompName: 'picker-view',
         config: require('../component/picker-view'),
