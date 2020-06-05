@@ -9,7 +9,7 @@ import {printf} from './utils'
 
 export default {
   mounted() {
-    printf('I am Header --> kbone')
+    printf('I am Header --> tbone')
   },
 }
 </script>

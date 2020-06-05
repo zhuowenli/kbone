@@ -1,19 +1,19 @@
 {
-    "name": "kbone",
-    "description": "web's adapter for miniprogram",
+    "name": "tbone",
+    "description": "web's adapter for miniapp",
     "scripts": {
         "prepare": "lerna bootstrap",
         "check": "npm run lint && npm run test",
-        "build": "cd packages/miniprogram-element && npm run build && cd ../..",
+        "build": "cd packages/miniapp-element && npm run build && cd ../..",
         "publish": "lerna publish",
-        "test": "npm run build && cd packages/vue-improve-loader && npm run test && cd ../miniprogram-render && npm run test && cd ../miniprogram-element && npm run test && cd ../kbone-tool && npm run test && cd ../..",
+        "test": "npm run build && cd packages/vue-improve-loader && npm run test && cd ../miniapp-render && npm run test && cd ../miniapp-element && npm run test && cd ../tbone-tool && npm run test && cd ../..",
         "lint": "eslint \"packages/*/src/**/*.js\" --fix && eslint \"packages/*/test/**/*.js\" --fix && eslint \"packages/*/tool/**/*.js\" --fix"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/wechat-miniprogram/kbone.git"
+        "url": "https://github.com/wechat-miniapp/tbone.git"
     },
-    "author": "wechat-miniprogram",
+    "author": "wechat-miniapp",
     "license": "MIT",
     "devDependencies": {
         "lerna": "3.16.4",

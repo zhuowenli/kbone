@@ -1,7 +1,7 @@
-module.exports = {	
-	origin: 'https://test.miniprogram.com',	
-	entry: '/',	
-	router: {		
+module.exports = {
+	origin: 'https://test.miniprogram.com',
+	entry: '/',
+	router: {
 		index: ['/'],
 		bar: ['/bar'],
 		scatter: ['/scatter'],
@@ -21,9 +21,9 @@ module.exports = {
 		parallel: ['/parallel'],
 		sankey: ['/sankey'],
 		themeriver: ['/themeriver'],
-	},	
-	redirect: {		
-		notFound: 'index',		
+	},
+	redirect: {
+		notFound: 'index',
 		accessDenied: 'index',
 	},
 	app: {
@@ -31,7 +31,7 @@ module.exports = {
 	},
 	projectConfig: {
 		appid: '',
-        projectname: 'kbone-demo20',
+        projectname: 'tbone-demo20',
 	},
 	packageConfig: {
 		author: 'wechat-miniprogram',

@@ -4,7 +4,7 @@ class Store {
   id = 1
 
   data = {
-    todo: [{ text: '学习 Kbone', id: 0, done: false }, { text: '学习 Omi', id: 1, done: false }],
+    todo: [{ text: '学习 Tbone', id: 0, done: false }, { text: '学习 Omi', id: 1, done: false }],
     left: 2,
     type: 'all',
     done: 0,

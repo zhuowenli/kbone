@@ -12,4 +12,4 @@ npm install --save-dev mp-webpack-plugin
 
 ## 使用
 
-[查看文档](https://wechat-miniprogram.github.io/kbone/docs/guide/tutorial.html)。
+[查看文档](https://wechat-miniapp.github.io/kbone/docs/guide/tutorial.html)。

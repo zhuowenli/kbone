@@ -23,7 +23,7 @@
 * 使用 wx-component 来渲染内置组件
 * 使用 wx-xxx 来渲染内置组件
 * 无前缀直接渲染内置组件
-* app.wxss 输出配置
+* app.acss 输出配置
 * 监听页面滚动
 
 ## demo5

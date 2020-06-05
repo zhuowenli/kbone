@@ -13,7 +13,7 @@ module.exports = {
     mode: 'production',
     entry: {
         'miniprogram-app': path.resolve(__dirname, '../src/app.js'),
-        
+
         index: path.resolve(__dirname, '../src/index/main.mp.js'),
         userconsole: path.resolve(__dirname, '../src/userconsole/main.mp.js'),
         storageconsole: path.resolve(__dirname, '../src/storageconsole/main.mp.js'),
@@ -56,14 +56,14 @@ module.exports = {
         minimizer: isOptimize ? [
             // 压缩CSS
             new OptimizeCSSAssetsPlugin({
-                assetNameRegExp: /\.(css|wxss)$/g,
+                assetNameRegExp: /\.(css|acss)$/g,
                 cssProcessor: require('cssnano'),
                 cssProcessorPluginOptions: {
                     preset: ['default', {
                         discardComments: {
                             removeAll: true,
                         },
-                        minifySelectors: false, // 因为 wxss 编译器不支持 .some>:first-child 这样格式的代码，所以暂时禁掉这个
+                        minifySelectors: false, // 因为 acss 编译器不支持 .some>:first-child 这样格式的代码，所以暂时禁掉这个
                     }],
                 },
                 canPrint: false
@@ -119,7 +119,7 @@ module.exports = {
             'process.env.isMiniprogram': process.env.isMiniprogram, // 注入环境变量，用于业务代码判断
         }),
         new MiniCssExtractPlugin({
-            filename: '[name].wxss',
+            filename: '[name].acss',
         }),
         new VueLoaderPlugin(),
         new MpPlugin(require('./miniprogram.config.js')),

@@ -1,9 +1,9 @@
 {
 	"name": "vue-improve-loader",
 	"version": "0.3.5",
-	"description": "a tool for develop miniprogram with vue",
+	"description": "a tool for develop miniapp with vue",
 	"main": "src/index.js",
-	"miniprogram": "src",
+	"miniapp": "src",
 	"scripts": {
 		"test": "jest --bail",
 		"test-debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --bail",
@@ -20,9 +20,9 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/wechat-miniprogram/kbone.git"
+		"url": "https://github.com/wechat-miniapp/tbone.git"
 	},
-	"author": "wechat-miniprogram",
+	"author": "wechat-miniapp",
 	"license": "MIT",
 	"devDependencies": {
 		"jest": "^24.8.0"

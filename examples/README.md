@@ -49,7 +49,7 @@ npm install
 * demo1：vue + vue-router
 * demo2：vue + reduce-loader + vue-improve-loader
 * demo3：vue + 内置组件
-* demo4：vue + vue-cli-plugin-kbone
+* demo4：vue + vue-cli-plugin-tbone
 * demo5：vue + 多页
 * demo6：[omi](https://github.com/Tencent/omi)
 * demo7：vue + 多页 + 分包
@@ -66,7 +66,7 @@ npm install
 * demo18：vue + 多页
 * demo19：vue + 云开发
 * demo20：vue + echarts
-* demo21：vue + 分包 + kbone 混合原生小程序开发
+* demo21：vue + 分包 + tbone 混合原生小程序开发
 * demo22：vue + 跨页面通信 + 跨页面数据共享
 * demo23：vue + vue-router（hash mode）
 * demo24：react + 多页

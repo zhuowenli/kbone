@@ -18,7 +18,7 @@ module.exports = [
         name: 'entryFileName',
         type: 'input',
         default: defaultOptions.entryFileName,
-        message: 'kbone 入口文件名称：',
+        message: 'tbone 入口文件名称：',
     },
 
     // generate
@@ -38,9 +38,9 @@ module.exports = [
         }],
     }, {
         when: answers => answers.app !== 'noemit',
-        name: 'appWxss',
+        name: 'appAcss',
         type: 'list',
-        message: '选择 app.wxss 输出配置：',
+        message: '选择 app.acss 输出配置：',
         choices: [{
             name: '输出默认标签样式',
             value: 'default',

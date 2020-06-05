@@ -1,4 +1,4 @@
-const mp = require('miniprogram-render')
+const mp = require('miniapp-render')
 const config = require('/* CONFIG_PATH */')
 
 /* INIT_FUNCTION */
@@ -15,26 +15,26 @@ function dealWithPage(evt, window, value) {
         url = mp.$$adapter.tool.completeURL(url, window.location.origin)
 
         const options = {url: `/pages/webview/index?url=${encodeURIComponent(url)}`}
-        if (type === 'jump') wx.redirectTo(options)
-        else if (type === 'open') wx.navigateTo(options)
+        if (type === 'jump') my.redirectTo(options)
+        else if (type === 'open') my.navigateTo(options)
     } else if (value === 'error') {
         console.error(`page not found: ${evt.url}`)
     } else if (value !== 'none') {
         const targeturl = `${window.location.origin}/redirect?url=${encodeURIComponent(url)}`
-        const subpackagesMap = window.$$miniprogram.subpackagesMap
+        const subpackagesMap = window.$$miniapp.subpackagesMap
         const packageName = subpackagesMap[value]
         const pageRoute = `/${packageName ? packageName + '/' : ''}pages/${value}/index`
         const options = {url: `${pageRoute}?type=${type}&targeturl=${encodeURIComponent(targeturl)}`}
-        if (window.$$miniprogram.isTabBarPage(pageRoute)) wx.switchTab(options)
-        else if (type === 'jump') wx.redirectTo(options)
-        else if (type === 'open') wx.navigateTo(options)
+        if (window.$$miniapp.isTabBarPage(pageRoute)) my.switchTab(options)
+        else if (type === 'jump') my.redirectTo(options)
+        else if (type === 'open') my.navigateTo(options)
     }
 }
 
 Page({
     data: {
         pageId: '',
-        bodyClass: 'h5-body miniprogram-root',
+        bodyClass: 'h5-body miniapp-root',
         bodyStyle: '',
         rootFontSize: '12px',
         pageStyle: '',
@@ -44,7 +44,7 @@ Page({
         const pageConfig = this.pageConfig = config.pages[pageName] || {}
 
         if (pageConfig.loadingText) {
-            wx.showLoading({
+            my.showLoading({
                 title: pageConfig.loadingText,
                 mask: true,
             })
@@ -77,17 +77,18 @@ Page({
             // 处理页面参数，只有当页面是其他页面打开或跳转时才处理
             let targetUrl = decodeURIComponent(query.targeturl)
             targetUrl = targetUrl.indexOf('://') >= 0 ? targetUrl : (config.origin + targetUrl)
-            this.window.$$miniprogram.init(targetUrl || null)
+            this.window.$$miniapp.init(targetUrl || null)
 
             if (query.search) this.window.location.search = decodeURIComponent(query.search)
             if (query.hash) this.window.location.hash = decodeURIComponent(query.hash)
         } else {
-            this.window.$$miniprogram.init()
+            console.log(this.window)
+            this.window.$$miniapp.init()
         }
 
         // 处理分享显示
         if (!pageConfig.share) {
-            wx.hideShareMenu()
+            my.hideShareMenu()
         }
 
         // 处理 document 更新
@@ -106,7 +107,7 @@ Page({
         this.document.documentElement.addEventListener('$$childNodesUpdate', () => {
             const domNode = this.document.body
             const data = {
-                bodyClass: `${domNode.className || ''} h5-body miniprogram-root`, // 增加默认 class
+                bodyClass: `${domNode.className || ''} h5-body miniapp-root`, // 增加默认 class
                 bodyStyle: domNode.style.cssText || ''
             }
 
@@ -116,10 +117,10 @@ Page({
         })
 
         // 处理 selectorQuery 获取
-        this.window.$$createSelectorQuery = () => wx.createSelectorQuery().in(this)
+        this.window.$$createSelectorQuery = () => my.createSelectorQuery().in(this)
 
         // 处理 intersectionObserver 获取
-        this.window.$$createIntersectionObserver = options => wx.createIntersectionObserver(this, options)
+        this.window.$$createIntersectionObserver = options => my.createIntersectionObserver(this, options)
 
         // 处理 openerEventChannel 获取
         this.window.$$getOpenerEventChannel = () => this.getOpenerEventChannel()
@@ -133,7 +134,7 @@ Page({
         })
         this.app = this.window.createApp()
         this.window.$$trigger('load')
-        this.window.$$trigger('wxload', {event: query})
+        this.window.$$trigger('myload', {event: query})
     },
     onShow() {
         // 方便调试
@@ -142,23 +143,23 @@ Page({
             document: this.document,
         }
         this.document.$$visibilityState = 'visible'
-        this.window.$$trigger('wxshow')
+        this.window.$$trigger('myshow')
         this.document.$$trigger('visibilitychange')
     },
     onReady() {
-        if (this.pageConfig.loadingText) wx.hideLoading()
-        this.window.$$trigger('wxready')
+        if (this.pageConfig.loadingText) my.hideLoading()
+        this.window.$$trigger('myready')
     },
     onHide() {
         global.$$runtime = null
         this.document.$$visibilityState = 'hidden'
-        this.window.$$trigger('wxhide')
+        this.window.$$trigger('myhide')
         this.document.$$trigger('visibilitychange')
     },
     onUnload() {
         this.document.$$visibilityState = 'unloaded'
         this.window.$$trigger('beforeunload')
-        this.window.$$trigger('wxunload')
+        this.window.$$trigger('myunload')
         if (this.app && this.app.$destroy) this.app.$destroy()
         this.document.body.$$recycle() // 回收 dom 节点
         this.window.$$destroy()
@@ -179,8 +180,8 @@ Page({
         if (window && window.onShareAppMessage) {
             const shareOptions = Object.assign({}, window.onShareAppMessage(data))
 
-            if (shareOptions.miniprogramPath) {
-                shareOptions.path = shareOptions.miniprogramPath
+            if (shareOptions.miniappPath) {
+                shareOptions.path = shareOptions.miniappPath
             } else {
                 const query = Object.assign({}, this.query || {})
                 let route = this.route
@@ -188,7 +189,7 @@ Page({
                 if (shareOptions.path) {
                     shareOptions.path = shareOptions.path[0] === '/' ? window.location.origin + shareOptions.path : shareOptions.path
                     const {pathname} = window.location.constructor.$$parse(shareOptions.path)
-                    const matchRoute = window.$$miniprogram.getMatchRoute(pathname || '/')
+                    const matchRoute = window.$$miniapp.getMatchRoute(pathname || '/')
                     if (matchRoute) route = matchRoute
                     query.targeturl = encodeURIComponent(shareOptions.path)
                 } else {

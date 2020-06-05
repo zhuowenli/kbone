@@ -7,8 +7,8 @@ module.exports = {
 			'/test/bbb',
 		],
 	},
-	redirect: {	
-		notFound: 'index',	
+	redirect: {
+		notFound: 'index',
 		accessDenied: 'index',
 	},
 	generate: {
@@ -19,7 +19,7 @@ module.exports = {
 	},
 	projectConfig: {
 		appid: '',
-        projectname: 'kbone-demo12',
+        projectname: 'tbone-demo12',
 	},
 	packageConfig: {
 		author: 'wechat-miniprogram',

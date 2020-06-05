@@ -14,7 +14,7 @@ module.exports = {
     app: {
         backgroundTextStyle: 'dark',
         navigationBarTextStyle: 'white',
-        navigationBarTitleText: 'kbone',
+        navigationBarTitleText: 'tbone',
     },
     appExtraConfig: {
         sitemapLocation: 'sitemap.json',

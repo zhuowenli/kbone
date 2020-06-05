@@ -1,14 +1,14 @@
 {
 	"name": "reduce-loader",
 	"version": "0.3.1",
-	"description": "a tool for develop miniprogram with vue",
+	"description": "a tool for develop miniapp with vue",
 	"main": "src/index.js",
-	"miniprogram": "src",
+	"miniapp": "src",
 	"scripts": {},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/wechat-miniprogram/kbone.git"
+		"url": "https://github.com/wechat-miniapp/tbone.git"
 	},
-	"author": "wechat-miniprogram",
+	"author": "wechat-miniapp",
 	"license": "MIT"
 }

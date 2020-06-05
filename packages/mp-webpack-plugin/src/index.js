@@ -12,11 +12,11 @@ const _ = require('./tool/utils')
 const PluginName = 'MpPlugin'
 const appJsTmpl = fs.readFileSync(path.resolve(__dirname, './tmpl/app.tmpl.js'), 'utf8')
 const pageJsTmpl = fs.readFileSync(path.resolve(__dirname, './tmpl/page.tmpl.js'), 'utf8')
-const appDisplayWxssTmpl = fs.readFileSync(path.resolve(__dirname, './tmpl/app.display.tmpl.wxss'), 'utf8')
-const appExtraWxssTmpl = fs.readFileSync(path.resolve(__dirname, './tmpl/app.extra.tmpl.wxss'), 'utf8')
-const appWxssTmpl = fs.readFileSync(path.resolve(__dirname, './tmpl/app.tmpl.wxss'), 'utf8')
+const appDisplayAcssTmpl = fs.readFileSync(path.resolve(__dirname, './tmpl/app.display.tmpl.acss'), 'utf8')
+const appExtraAcssTmpl = fs.readFileSync(path.resolve(__dirname, './tmpl/app.extra.tmpl.acss'), 'utf8')
+const appAcssTmpl = fs.readFileSync(path.resolve(__dirname, './tmpl/app.tmpl.acss'), 'utf8')
 const customComponentJsTmpl = fs.readFileSync(path.resolve(__dirname, './tmpl/custom-component.tmpl.js'), 'utf8')
-const projectConfigJsonTmpl = require('./tmpl/project.config.tmpl.json')
+const projectConfigJsonTmpl = require('./tmpl/mini.project.tmpl.json')
 const packageConfigJsonTmpl = require('./tmpl/package.tmpl.json')
 
 process.env.isMiniprogram = true // 设置环境变量
@@ -92,11 +92,10 @@ class MpPlugin {
             const globalConfig = options.global || {}
             const pageConfigMap = options.pages || {}
             const subpackagesConfig = generateConfig.subpackages || {}
-            const preloadRuleConfig = generateConfig.preloadRule || {}
             const tabBarConfig = generateConfig.tabBar || {}
-            const wxCustomComponentConfig = generateConfig.wxCustomComponent || {}
-            const wxCustomComponentRoot = wxCustomComponentConfig.root
-            const wxCustomComponents = wxCustomComponentConfig.usingComponents || {}
+            const myCustomComponentConfig = generateConfig.myCustomComponent || {}
+            const myCustomComponentRoot = myCustomComponentConfig.root
+            const myCustomComponents = myCustomComponentConfig.usingComponents || {}
             const pages = []
             const subpackagesMap = {} // 页面名-分包名
             const assetsMap = {} // 页面名-依赖
@@ -109,7 +108,7 @@ class MpPlugin {
             for (const entryName of entryNames) {
                 const assets = {js: [], css: []}
                 const filePathMap = {}
-                const extRegex = /\.(css|js|wxss)(\?|$)/
+                const extRegex = /\.(css|js|acss)(\?|$)/
                 const entryFiles = compilation.entrypoints.get(entryName).getFiles()
                 entryFiles.forEach(filePath => {
                     // 跳过非 css 和 js
@@ -122,7 +121,7 @@ class MpPlugin {
 
                     // 记录
                     let ext = extMatch[1]
-                    ext = ext === 'wxss' ? 'css' : ext
+                    ext = ext === 'acss' ? 'css' : ext
                     assets[ext].push(filePath)
 
                     // 插入反查表
@@ -165,10 +164,10 @@ class MpPlugin {
             if (appJsEntryIndex >= 0) entryNames.splice(appJsEntryIndex, 1)
 
             // 处理自定义组件字段
-            Object.keys(wxCustomComponents).forEach(key => {
-                if (typeof wxCustomComponents[key] === 'string') {
-                    wxCustomComponents[key] = {
-                        path: wxCustomComponents[key],
+            Object.keys(myCustomComponents).forEach(key => {
+                if (typeof myCustomComponents[key] === 'string') {
+                    myCustomComponents[key] = {
+                        path: myCustomComponents[key],
                     }
                 }
             })
@@ -187,8 +186,8 @@ class MpPlugin {
                 const reachBottom = pageConfig && pageConfig.reachBottom
                 const reachBottomDistance = pageConfig && pageConfig.reachBottomDistance
                 const pullDownRefresh = pageConfig && pageConfig.pullDownRefresh
-                const rem = pageConfig && pageConfig.rem
-                const pageStyle = pageConfig && pageConfig.pageStyle
+                // const rem = pageConfig && pageConfig.rem
+                // const pageStyle = pageConfig && pageConfig.pageStyle
                 const pageExtraConfig = pageConfig && pageConfig.extra || {}
                 const packageName = subpackagesMap[entryName]
                 const pageRoute = `${packageName ? packageName + '/' : ''}pages/${entryName}/index`
@@ -216,27 +215,27 @@ class MpPlugin {
                     .replace('/* PULL_DOWN_REFRESH_FUNCTION */', pullDownRefreshFunction)
                 addFile(compilation, `../${pageRoute}.js`, pageJsContent)
 
-                // 页面 wxml
-                let pageWxmlContent = `<element wx:if="{{pageId}}" class="{{bodyClass}}" style="{{bodyStyle}}" data-private-node-id="e-body" data-private-page-id="{{pageId}}" ${wxCustomComponentRoot ? 'generic:custom-component="custom-component"' : ''}></element>`
-                if (rem || pageStyle) {
-                    pageWxmlContent = `<page-meta ${rem ? 'root-font-size="{{rootFontSize}}"' : ''} ${pageStyle ? 'page-style="{{pageStyle}}"' : ''}></page-meta>` + pageWxmlContent
-                }
-                addFile(compilation, `../${pageRoute}.wxml`, pageWxmlContent)
+                // 页面 axml
+                const pageAxmlContent = `<element a:if="{{pageId}}" class="{{bodyClass}}" style="{{bodyStyle}}" data-private-node-id="e-body" data-private-page-id="{{pageId}}" ${myCustomComponentRoot ? 'generic:custom-component="custom-component"' : ''}></element>`
+                // if (rem || pageStyle) {
+                //     pageAxmlContent = `<page-meta ${rem ? 'root-font-size="{{rootFontSize}}"' : ''} ${pageStyle ? 'page-style="{{pageStyle}}"' : ''}></page-meta>` + pageAxmlContent
+                // }
+                addFile(compilation, `../${pageRoute}.axml`, pageAxmlContent)
 
-                // 页面 wxss
-                let pageWxssContent = assets.css.map(css => `@import "${getAssetPath(assetPathPrefix, css, assetsSubpackageMap)}";`).join('\n')
-                if (pageBackgroundColor) pageWxssContent = `page { background-color: ${pageBackgroundColor}; }\n` + pageWxssContent
-                addFile(compilation, `../${pageRoute}.wxss`, adjustCss(pageWxssContent))
+                // 页面 acss
+                let pageAcssContent = assets.css.map(css => `@import "${getAssetPath(assetPathPrefix, css, assetsSubpackageMap)}";`).join('\n')
+                if (pageBackgroundColor) pageAcssContent = `page { background-color: ${pageBackgroundColor}; }\n` + pageAcssContent
+                addFile(compilation, `../${pageRoute}.acss`, adjustCss(pageAcssContent))
 
                 // 页面 json
                 const pageJson = {
                     ...pageExtraConfig,
                     enablePullDownRefresh: !!pullDownRefresh,
                     usingComponents: {
-                        element: 'miniprogram-element',
+                        element: 'miniapp-element',
                     },
                 }
-                if (wxCustomComponentRoot) {
+                if (myCustomComponentRoot) {
                     pageJson.usingComponents['custom-component'] = `${assetPathPrefix}../../custom-component/index`
                 }
                 if (reachBottom && typeof reachBottomDistance === 'number') {
@@ -252,8 +251,8 @@ class MpPlugin {
             // 追加 webview 页面
             if (options.redirect && (options.redirect.notFound === 'webview' || options.redirect.accessDenied === 'webview')) {
                 addFile(compilation, '../pages/webview/index.js', 'Page({data:{url:\'\'},onLoad: function(query){this.setData({url:decodeURIComponent(query.url)})}})')
-                addFile(compilation, '../pages/webview/index.wxml', '<web-view src="{{url}}"></web-view>')
-                addFile(compilation, '../pages/webview/index.wxss', '')
+                addFile(compilation, '../pages/webview/index.axml', '<web-view src="{{url}}"></web-view>')
+                addFile(compilation, '../pages/webview/index.acss', '')
                 addFile(compilation, '../pages/webview/index.json', '{"usingComponents":{}}')
                 pages.push('pages/webview/index')
             }
@@ -269,78 +268,36 @@ class MpPlugin {
                     .replace('/* INIT_FUNCTION */', `var fakeWindow = {};var fakeDocument = {};${appAssets.js.map(js => 'require(\'' + getAssetPath('', js, assetsSubpackageMap, '') + '\')(fakeWindow, fakeDocument);').join('')}var appConfig = fakeWindow.appOptions || {};`)
                 addFile(compilation, '../app.js', appJsContent)
 
-                // app wxss
-                const appWxssConfig = generateConfig.appWxss || 'default'
-                let appWxssContent = appWxssConfig === 'none' ? '' : appWxssConfig === 'display' ? appDisplayWxssTmpl : appWxssTmpl
+                // app acss
+                const appAcssConfig = generateConfig.appAcss || 'default'
+                let appAcssContent = appAcssConfig === 'none' ? '' : appAcssConfig === 'display' ? appDisplayAcssTmpl : appAcssTmpl
                 if (appAssets.css.length) {
-                    appWxssContent += `\n${appAssets.css.map(css => `@import "${getAssetPath('', css, assetsSubpackageMap, '')}";`).join('\n')}`
+                    appAcssContent += `\n${appAssets.css.map(css => `@import "${getAssetPath('', css, assetsSubpackageMap, '')}";`).join('\n')}`
                 }
-                appWxssContent = adjustCss(appWxssContent)
-                if (appWxssConfig !== 'none' && appWxssConfig !== 'display') {
-                    appWxssContent += '\n' + appExtraWxssTmpl
+                appAcssContent = adjustCss(appAcssContent)
+                if (appAcssConfig !== 'none' && appAcssConfig !== 'display') {
+                    appAcssContent += '\n' + appExtraAcssTmpl
                 }
-                addFile(compilation, '../app.wxss', appWxssContent)
+                addFile(compilation, '../app.acss', appAcssContent)
 
                 // app json
-                const subpackages = []
-                const preloadRule = {}
-                Object.keys(subpackagesConfig).forEach(packageName => {
-                    const pages = subpackagesConfig[packageName] || []
-                    subpackages.push({
-                        name: packageName,
-                        root: packageName,
-                        pages: pages.map(entryName => `pages/${entryName}/index`),
-                    })
-                })
-                Object.keys(preloadRuleConfig).forEach(entryName => {
-                    const packageName = subpackagesMap[entryName]
-                    const pageRoute = `${packageName ? packageName + '/' : ''}pages/${entryName}/index`
-                    preloadRule[pageRoute] = preloadRuleConfig[entryName]
-                })
                 const userAppJson = options.appExtraConfig || {}
                 const appJson = {
                     pages,
-                    window: options.app || {},
-                    subpackages,
-                    preloadRule,
+                    window: generateConfig.window || {},
+                    tabBar: tabBarConfig || {},
                     ...userAppJson,
-                }
-                if (tabBarConfig.list && tabBarConfig.list.length) {
-                    const tabBar = Object.assign({}, tabBarConfig)
-                    tabBar.list = tabBarConfig.list.map(item => {
-                        const iconPathName = item.iconPath ? _.md5File(item.iconPath) + path.extname(item.iconPath) : ''
-                        if (iconPathName) _.copyFile(item.iconPath, path.resolve(outputPath, `../images/${iconPathName}`))
-                        const selectedIconPathName = item.selectedIconPath ? _.md5File(item.selectedIconPath) + path.extname(item.selectedIconPath) : ''
-                        if (selectedIconPathName) _.copyFile(item.selectedIconPath, path.resolve(outputPath, `../images/${selectedIconPathName}`))
-                        tabBarMap[`/pages/${item.pageName}/index`] = true
-
-                        return {
-                            pagePath: `pages/${item.pageName}/index`,
-                            text: item.text,
-                            iconPath: iconPathName ? `./images/${iconPathName}` : '',
-                            selectedIconPath: selectedIconPathName ? `./images/${selectedIconPathName}` : '',
-                        }
-                    })
-
-                    if (tabBar.custom) {
-                        // 自定义 tabBar
-                        const customTabBarDir = tabBar.custom
-                        tabBar.custom = true
-                        _.copyDir(customTabBarDir, path.resolve(outputPath, '../custom-tab-bar'))
-                    }
-
-                    appJson.tabBar = tabBar
                 }
                 const appJsonContent = JSON.stringify(appJson, null, '\t')
                 addFile(compilation, '../app.json', appJsonContent)
 
                 if (isEmitProjectConfig) {
-                    // project.config.json
+                    // mini.project.json
                     const userProjectConfigJson = options.projectConfig || {}
                     // 这里需要深拷贝，不然数组相同引用指向一直 push
                     const projectConfigJson = JSON.parse(JSON.stringify(projectConfigJsonTmpl))
                     const projectConfigJsonContent = JSON.stringify(_.merge(projectConfigJson, userProjectConfigJson), null, '\t')
-                    const projectConfigPath = generateConfig.projectConfig ? path.join(path.relative(outputPath, generateConfig.projectConfig), './project.config.json') : '../project.config.json'
+                    const projectConfigPath = generateConfig.projectConfig ? path.join(path.relative(outputPath, generateConfig.projectConfig), './mini.project.json') : '../mini.project.json'
                     addFile(compilation, projectConfigPath, projectConfigJsonContent)
                 }
 
@@ -378,13 +335,13 @@ class MpPlugin {
                 })
             }
             const configJsContent = 'module.exports = ' + JSON.stringify({
-                origin: options.origin || 'https://miniprogram.default',
+                origin: options.origin || 'https://miniapp.default',
                 entry: options.entry || '/',
                 router,
                 runtime: Object.assign({
                     subpackagesMap,
                     tabBarMap,
-                    usingComponents: wxCustomComponentConfig.usingComponents || {},
+                    usingComponents: myCustomComponentConfig.usingComponents || {},
                 }, options.runtime || {}),
                 pages: pageConfigMap,
                 redirect: options.redirect || {},
@@ -405,27 +362,27 @@ class MpPlugin {
             addFile(compilation, '../package.json', packageConfigJsonContent)
 
             // node_modules
-            addFile(compilation, '../node_modules/.miniprogram', '')
+            addFile(compilation, '../node_modules/.miniapp', '')
 
-            // 自定义组件，生成到 miniprogram_npm 中
-            if (wxCustomComponentRoot) {
-                _.copyDir(wxCustomComponentRoot, path.resolve(outputPath, '../custom-component/components'))
+            // 自定义组件，生成到 miniapp_npm 中
+            if (myCustomComponentRoot) {
+                _.copyDir(myCustomComponentRoot, path.resolve(outputPath, '../custom-component/components'))
 
                 const realUsingComponents = {}
-                const names = Object.keys(wxCustomComponents)
-                names.forEach(key => realUsingComponents[key] = `components/${wxCustomComponents[key].path}`)
+                const names = Object.keys(myCustomComponents)
+                names.forEach(key => realUsingComponents[key] = `components/${myCustomComponents[key].path}`)
 
                 // custom-component/index.js
                 addFile(compilation, '../custom-component/index.js', customComponentJsTmpl)
 
-                // custom-component/index.wxml
-                addFile(compilation, '../custom-component/index.wxml', names.map((key, index) => {
-                    const {props = [], events = []} = wxCustomComponents[key]
-                    return `<${key} wx:${index === 0 ? 'if' : 'elif'}="{{name === '${key}'}}" id="{{id}}" class="{{class}}" style="{{style}}" ${props.map(name => name + '="{{' + name + '}}"').join(' ')} ${events.map(name => 'bind' + name + '="on' + name + '"').join(' ')}><slot/></${key}>`
+                // custom-component/index.axml
+                addFile(compilation, '../custom-component/index.axml', names.map((key, index) => {
+                    const {props = [], events = []} = myCustomComponents[key]
+                    return `<${key} a:${index === 0 ? 'if' : 'elif'}="{{name === '${key}'}}" id="{{id}}" class="{{class}}" style="{{style}}" ${props.map(name => name + '="{{' + name + '}}"').join(' ')} ${events.map(name => 'bind' + name + '="on' + name + '"').join(' ')}><slot/></${key}>`
                 }).join('\n'))
 
-                // custom-component/index.wxss
-                addFile(compilation, '../custom-component/index.wxss', '')
+                // custom-component/index.acss
+                addFile(compilation, '../custom-component/index.acss', '')
 
                 // custom-component/index.json
                 addFile(compilation, '../custom-component/index.json', JSON.stringify({
@@ -437,8 +394,8 @@ class MpPlugin {
             callback()
         })
 
+        // 处理头尾追加内容
         compiler.hooks.compilation.tap(PluginName, compilation => {
-            // 处理头尾追加内容
             const globalVarsConfig = generateConfig.globalVars || []
             if (this.afterOptimizations) {
                 compilation.hooks.afterOptimizeChunkAssets.tap(PluginName, chunks => {
@@ -452,22 +409,22 @@ class MpPlugin {
             }
         })
 
+        // 处理自动安装小程序依赖
         let hasBuiltNpm = false
         compiler.hooks.done.tapAsync(PluginName, (stats, callback) => {
-            // 处理自动安装小程序依赖
             const autoBuildNpm = generateConfig.autoBuildNpm || false
             const distDir = path.dirname(stats.compilation.outputOptions.path)
 
-            hasBuiltNpm = _.isFileExisted(path.resolve(distDir, './node_modules/miniprogram-element/package.json')) && _.isFileExisted(path.resolve(distDir, './node_modules/miniprogram-render/package.json'))
+            hasBuiltNpm = _.isFileExisted(path.resolve(distDir, './node_modules/@zhuowenli/miniapp-element/package.json')) && _.isFileExisted(path.resolve(distDir, './node_modules/@zhuowenli/miniapp-render/package.json'))
 
             if (hasBuiltNpm || !autoBuildNpm) {
                 if (hasBuiltNpm) console.log(colors.bold('\ndependencies has been built\n'))
-                return callback()
+                // return callback()
             }
 
             const build = () => {
-                _.copyDir(path.resolve(distDir, './node_modules/miniprogram-element/src'), path.resolve(distDir, './miniprogram_npm/miniprogram-element'))
-                _.copyDir(path.resolve(distDir, './node_modules/miniprogram-render/src'), path.resolve(distDir, './miniprogram_npm/miniprogram-render'))
+                _.copyDir(path.resolve(distDir, './node_modules/@zhuowenli/miniapp-element/dist/ali'), path.resolve(distDir, './miniapp_npm/miniapp-element'))
+                _.copyDir(path.resolve(distDir, './node_modules/@zhuowenli/miniapp-render/dist/ali'), path.resolve(distDir, './miniapp_npm/miniapp-render'))
                 callback()
             }
             console.log(colors.bold('\nstart building dependencies...\n'))

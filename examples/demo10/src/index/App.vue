@@ -1,6 +1,6 @@
 <template>
   <div class="cnt">
-    <h2>kbone</h2>
+    <h2>tbone</h2>
     <comp-a ref="compA" class="block" :prefix="prefixA" :suffix="suffixA" @someevent="onEvent">
       <div>comp-a slot</div>
     </comp-a>

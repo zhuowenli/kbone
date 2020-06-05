@@ -12,7 +12,7 @@ const suffixRegexp = /[a-zA-Z0-9_-]/
 const replaceTagNamePlugin = postcss.plugin('replaceTagName', () => root => {
     root.walk(child => {
         if (child.type === 'atrule') {
-            // 处理 wxss 不支持的 @ 前缀
+            // 处理 acss 不支持的 @ 前缀
             if (child.name === '-moz-keyframes') {
                 child.remove()
             }
@@ -20,13 +20,13 @@ const replaceTagNamePlugin = postcss.plugin('replaceTagName', () => root => {
             const selectors = []
 
             child.selectors.forEach(selector => {
-                // 小程序 wxss 不支持 .xxx>:first-child 这样的写法
+                // 小程序 acss 不支持 .xxx>:first-child 这样的写法
                 selector = selector.replace(/>:/g, '>*:')
 
-                // 小程序 wxss 不支持 ~ 选择器，故直接抛弃
+                // 小程序 acss 不支持 ~ 选择器，故直接抛弃
                 const wavyLineIndex = selector.indexOf('~')
                 if (wavyLineIndex !== -1 && selector[wavyLineIndex + 1] !== '=') {
-                    console.warn(colors.bold(`\nselector ${colors.yellow(selector)} is not supported in wxss, so it will be deleted\n`))
+                    console.warn(colors.bold(`\nselector ${colors.yellow(selector)} is not supported in acss, so it will be deleted\n`))
                     return
                 }
 

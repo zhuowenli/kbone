@@ -1,8 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const { VueLoaderPlugin } = require('vue-loader')
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const {VueLoaderPlugin} = require('vue-loader')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const MpPlugin = require('mp-webpack-plugin') // 用于构建小程序代码的 webpack 插件
 
@@ -48,14 +48,14 @@ module.exports = {
         minimizer: isOptimize ? [
             // 压缩CSS
             new OptimizeCSSAssetsPlugin({
-                assetNameRegExp: /\.(css|wxss)$/g,
+                assetNameRegExp: /\.(css|acss)$/g,
                 cssProcessor: require('cssnano'),
                 cssProcessorPluginOptions: {
                     preset: ['default', {
                         discardComments: {
                             removeAll: true,
                         },
-                        minifySelectors: false, // 因为 wxss 编译器不支持 .some>:first-child 这样格式的代码，所以暂时禁掉这个
+                        minifySelectors: false, // 因为 acss 编译器不支持 .some>:first-child 这样格式的代码，所以暂时禁掉这个
                     }],
                 },
                 canPrint: false
@@ -101,12 +101,12 @@ module.exports = {
     },
     plugins: [
         new webpack.DefinePlugin({
-            'process.env.isMiniprogram': process.env.isMiniprogram, // 注入环境变量，用于业务代码判断
+            'process.env.isminiapp': process.env.isminiapp, // 注入环境变量，用于业务代码判断
         }),
         new MiniCssExtractPlugin({
-            filename: '[name].wxss',
+            filename: '[name].acss',
         }),
         new VueLoaderPlugin(),
-        new MpPlugin(require('./miniprogram.config.js')),
+        new MpPlugin(require('./miniapp.config.js')),
     ],
 }

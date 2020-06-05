@@ -6,8 +6,8 @@ module.exports = {
 	router: {
 		index: ['/'],
 	},
-	redirect: {	
-		notFound: 'index',	
+	redirect: {
+		notFound: 'index',
 		accessDenied: 'index',
 	},
 	generate: {
@@ -32,7 +32,7 @@ module.exports = {
 	},
 	projectConfig: {
 		appid: '',
-        projectname: 'kbone-demo10',
+        projectname: 'tbone-demo10',
 	},
 	packageConfig: {
 		author: 'wechat-miniprogram',

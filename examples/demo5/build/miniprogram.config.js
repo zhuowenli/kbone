@@ -1,13 +1,13 @@
-module.exports = {	
-	origin: 'https://test.miniprogram.com',	
-	entry: '/',	
-	router: {		
+module.exports = {
+	origin: 'https://test.miniprogram.com',
+	entry: '/',
+	router: {
 		page1: ['/a'],
 		page2: ['/b'],
 		page3: ['/c'],
-	},	
-	redirect: {		
-		notFound: 'page1',		
+	},
+	redirect: {
+		notFound: 'page1',
 		accessDenied: 'page1',
 	},
 	generate: {
@@ -31,7 +31,7 @@ module.exports = {
 	},
 	projectConfig: {
 		appid: '',
-        projectname: 'kbone-demo5',
+        projectname: 'tbone-demo5',
 	},
 	packageConfig: {
 		author: 'wechat-miniprogram',

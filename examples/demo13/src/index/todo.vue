@@ -36,7 +36,7 @@ export default {
   data() {
     return {
       id: 1,
-      todo: [{ text: '学习 Kbone', id: 0, done: false }, { text: '学习 vue', id: 1, done: false }],
+      todo: [{ text: '学习 Tbone', id: 0, done: false }, { text: '学习 vue', id: 1, done: false }],
       left: 2,
       type: 'all',
       done: 0,

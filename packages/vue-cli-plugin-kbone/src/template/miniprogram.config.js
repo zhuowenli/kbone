@@ -1,5 +1,5 @@
 module.exports = {
-    origin: 'https://test.miniprogram.com',
+    origin: 'https://test.miniapp.com',
     entry: '<%= options.entry.trim() %>',
     router: <%- options.router.trim() %>,
     redirect: {
@@ -8,13 +8,13 @@ module.exports = {
     },
     generate: {
         app: '<%= options.app.trim() %>',
-        appWxss: '<%= options.appWxss.trim() %>',
+        appAcss: '<%= options.appAcss.trim() %>',
         autoBuildNpm: <%- options.autoBuildNpm %>,
     },
     app: {
         backgroundTextStyle: 'dark',
         navigationBarTextStyle: 'white',
-        navigationBarTitleText: 'kbone',
+        navigationBarTitleText: 'tbone',
     },
     appExtraConfig: {
         sitemapLocation: 'sitemap.json',

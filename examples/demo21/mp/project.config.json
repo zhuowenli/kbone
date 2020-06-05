@@ -12,7 +12,7 @@
 		"newFeature": true,
 		"coverView": true,
 		"autoAudits": false,
-		"showShadowRootInWxmlPanel": true,
+		"showShadowRootInAxmlPanel": true,
 		"scopeDataCheck": false,
 		"checkInvalidKey": true,
 		"checkSiteMap": true,
@@ -29,7 +29,7 @@
 	"compileType": "miniprogram",
 	"libVersion": "2.10.4",
 	"appid": "",
-	"projectname": "kbone-demo21",
+	"projectname": "tbone-demo21",
 	"debugOptions": {
 		"hidedInDevtools": []
 	},

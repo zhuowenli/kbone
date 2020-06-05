@@ -39,7 +39,7 @@ export default {
 
     window.onShareAppMessage = () => {
       return {
-        title: 'kbone-demo',
+        title: 'tbone-demo',
         // path: '/a', // 当前页面
         // path: 'https://test.miniprogram.com/a', // 当前页面的完整 url
         // path: '/b', // 其他页面

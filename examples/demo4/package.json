@@ -22,7 +22,7 @@
     "cross-env": "^5.2.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.1.2",
-    "vue-cli-plugin-kbone": "file:../../packages/vue-cli-plugin-kbone",
+    "vue-cli-plugin-tbone": "file:../../packages/vue-cli-plugin-tbone",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {

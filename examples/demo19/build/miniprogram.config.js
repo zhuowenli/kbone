@@ -1,18 +1,18 @@
 const path = require('path')
 
-module.exports = {	
-	origin: 'https://test.miniprogram.com',	
-	entry: '/index',	
-	router: {		
+module.exports = {
+	origin: 'https://test.miniprogram.com',
+	entry: '/index',
+	router: {
 		inde: ['/index'],
 		userconsole: ['/userconsole'],
 		storageconsole: ['/storageconsole'],
 		databaseguide: ['/databaseguide'],
 		deployfunctions: ['/deployfunctions'],
 		chooselib: ['/chooselib'],
-	},	
-	redirect: {		
-		notFound: 'index',		
+	},
+	redirect: {
+		notFound: 'index',
 		accessDenied: 'index',
 	},
 	generate: {
@@ -62,7 +62,7 @@ module.exports = {
 	},
 	projectConfig: {
 		appid: '',
-		projectname: 'kbone-demo19',
+		projectname: 'tbone-demo19',
 		miniprogramRoot: 'miniprogram/',
 		cloudfunctionRoot: 'cloudfunctions/',
 	},

@@ -11,7 +11,7 @@ module.exports = {
     cdnLimit: 10 * 1024,
     entryFileName: 'main.mp.js',
 
-    appWxss: 'default',
+    appAcss: 'default',
     autoBuildNpm: '\'npm\'',
     rem: false,
 }

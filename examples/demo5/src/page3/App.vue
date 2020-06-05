@@ -37,7 +37,7 @@ export default {
 
     window.onShareAppMessage = () => {
       return {
-        title: 'kbone-demo',
+        title: 'tbone-demo',
         path: '/a',
       }
     }

@@ -1,18 +1,18 @@
 module.exports = (api, options) => {
-    if (process.env.MP_ENV === 'miniprogram') {
+    if (process.env.MP_ENV === 'miniapp') {
         const path = require('path')
         const webpack = require('webpack')
         const MpPlugin = require('mp-webpack-plugin')
         const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 
         const cwd = api.getCwd()
-        const mpPluginConfigPath = path.join(path.relative(__dirname, cwd), './miniprogram.config')
+        const mpPluginConfigPath = path.join(path.relative(__dirname, cwd), './miniapp.config')
         // eslint-disable-next-line import/no-dynamic-require
         const mpPluginConfig = require(mpPluginConfigPath)
 
         options.css.extract = {
-            filename: '[name].wxss',
-            chunkFilename: '[name].wxss',
+            filename: '[name].acss',
+            chunkFilename: '[name].acss',
         }
 
         const pages = options.pages || {
@@ -89,14 +89,14 @@ module.exports = (api, options) => {
                     minimizer: webpackConfig.mode === 'production' ? [
                         // 压缩CSS
                         new OptimizeCSSAssetsPlugin({
-                            assetNameRegExp: /\.(css|wxss)$/g,
+                            assetNameRegExp: /\.(css|acss)$/g,
                             cssProcessor: require('cssnano'),
                             cssProcessorPluginOptions: {
                                 preset: ['default', {
                                     discardComments: {
                                         removeAll: true,
                                     },
-                                    minifySelectors: false, // 因为 wxss 编译器不支持 .some>:first-child 这样格式的代码，所以暂时禁掉这个
+                                    minifySelectors: false, // 因为 acss 编译器不支持 .some>:first-child 这样格式的代码，所以暂时禁掉这个
                                 }],
                             },
                             canPrint: false

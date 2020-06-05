@@ -1,20 +1,20 @@
 {
-    "name": "vue-cli-plugin-kbone",
+    "name": "vue-cli-plugin-tbone",
     "version": "0.9.17",
-    "description": "kbone plugin for vue-cli",
+    "description": "tbone plugin for vue-cli",
     "main": "src/index.js",
     "repository": {
         "type": "git",
-        "url": "https://github.com/wechat-miniprogram/kbone.git"
+        "url": "https://github.com/wechat-miniapp/tbone.git"
     },
     "keywords": [
         "vue",
         "cli",
-        "kbone"
+        "tbone"
     ],
-    "author": "wechat-miniprogram",
+    "author": "wechat-miniapp",
     "license": "MIT",
-    "homepage": "https://github.com/wechat-miniprogram/kbone#readme",
+    "homepage": "https://github.com/wechat-miniapp/tbone#readme",
     "dependencies": {
         "cross-env": "^5.2.0",
         "cssnano": "^4.1.10",

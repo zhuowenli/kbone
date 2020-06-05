@@ -1,4 +1,4 @@
-const mp = require('miniprogram-render')
+const mp = require('miniapp-render')
 
 const {
     Event,
@@ -20,7 +20,7 @@ function checkComponentAttr({props = []}, name, domNode, destData, oldData) {
     // 补充 id、class 和 style
     const newId = domNode.id
     if (!oldData || oldData.id !== newId) destData.id = newId
-    const newClass = `wx-comp-${name} node-${domNode.$$nodeId} ${domNode.className || ''}`
+    const newClass = `my-comp-${name} node-${domNode.$$nodeId} ${domNode.className || ''}`
     if (!oldData || oldData.class !== newClass) destData.class = newClass
     const newStyle = domNode.style.cssText
     if (!oldData || oldData.style !== newStyle) destData.style = newStyle
@@ -70,12 +70,12 @@ Component({
         if (Object.keys(data).length) this.setData(data)
 
         // 记录该 domNode 节点对应的自定义组件实例
-        this.domNode._wxCustomComponent = this.selectComponent(`.node-${this.domNode.$$nodeId}`)
+        this.domNode._myCustomComponent = this.selectComponent(`.node-${this.domNode.$$nodeId}`)
     },
     detached() {
         this.nodeId = null
         this.pageId = null
-        this.domNode._wxCustomComponent = null
+        this.domNode._myCustomComponent = null
         this.domNode = null
     },
     methods: {
@@ -93,7 +93,7 @@ Component({
             this.setData(newData)
 
             // 更新该 domNode 节点对应的自定义组件实例
-            this.domNode._wxCustomComponent = this.selectComponent(`.node-${this.domNode.$$nodeId}`)
+            this.domNode._myCustomComponent = this.selectComponent(`.node-${this.domNode.$$nodeId}`)
         },
 
         /**

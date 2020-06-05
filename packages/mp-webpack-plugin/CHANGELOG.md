@@ -15,7 +15,7 @@
 ## 0.9.9
 
 * 自动构建 npm 逻辑支持检测 npm 包是否已被安装进而跳过此过程
-* 构建时自动删除 wxss 不支持的 ~ 选择器相关样式
+* 构建时自动删除 acss 不支持的 ~ 选择器相关样式
 
 ## 0.9.8
 
@@ -52,7 +52,7 @@
 
 ## 0.8.5
 
-* 因为小程序 wxss 目前不支持 .xxx>:first-child 写法，将 css 后处理为 .xxx>*:first-child 写法
+* 因为小程序 acss 目前不支持 .xxx>:first-child 写法，将 css 后处理为 .xxx>*:first-child 写法
 
 ## 0.8.4
 
@@ -122,7 +122,7 @@
 
 ## 0.4.3
 
-* 将 miniprogram-element/index.wxss 中的 button 默认样式重制代码迁移到 app.wxss 中
+* 将 miniapp-element/index.acss 中的 button 默认样式重制代码迁移到 app.acss 中
 
 ## 0.4.2
 
@@ -130,11 +130,11 @@
 
 ## 0.4.1
 
-* 删除生成的 wxss 中不支持的 @-moz-keyframes 规则
+* 删除生成的 acss 中不支持的 @-moz-keyframes 规则
 
 ## 0.4.0
 
-* 支持自定义 app.js 和 app.wxss
+* 支持自定义 app.js 和 app.acss
 * 支持小程序自定义组件
 
 ## 0.2.2
@@ -176,4 +176,4 @@
 
 ## 0.0.15
 
-* 支持 app.wxss 的输出配置
+* 支持 app.acss 的输出配置
